@@ -18,10 +18,18 @@ class BigFloat {
         BigFloat operator*(const BigFloat& bf);
         BigFloat operator/(const BigFloat& bf);
         BigFloat operator%(const BigFloat& bf);
+        bool operator==(const BigFloat& bf);
+        bool operator!=(const BigFloat& bf);
+        bool operator>(const BigFloat& bf);
+        bool operator<(const BigFloat& bf);
+        bool operator>=(const BigFloat& bf);
+        bool operator<=(const BigFloat& bf);
 
     protected:
 
     private:
+        bool isLess(const BigFloat& bf);
+        bool isMore(const BigFloat& bf);
         vector<char> *value;
 };
 
