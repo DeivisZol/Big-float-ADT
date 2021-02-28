@@ -1,0 +1,14 @@
+# depslib dependency file v1.0
+1614454964 source:c:\users\deivis\desktop\nd.1\main.cpp
+	<iostream>
+	<BigFloat.hpp>
+
+1614454935 source:c:\users\deivis\desktop\nd.1\src\bigfloat.cpp
+	"BigFloat.hpp"
+
+1614452309 c:\users\deivis\desktop\nd.1\include\bigfloat.hpp
+	<string>
+	<vector>
+	<cmath>
+	<iostream>
+
