@@ -1,6 +1,16 @@
 #include "BigFloat.hpp"
 
 BigFloat::BigFloat(string input) {
+    input.erase(0, input.find_first_not_of('0'));
+    if(input[0] == '.') {
+        input = "0" + input;
+    }
+    reverse(input.begin(),input.end());
+    input.erase(0, input.find_first_not_of('0'));
+    reverse(input.begin(), input.end());
+    if(input[input.length() - 1] == '.') {
+        input += "0";
+    }
     value = new vector<char>(input.begin(), input.end());
 }
 
@@ -9,28 +19,36 @@ BigFloat::~BigFloat()
     //dtor
 }
 
-string BigFloat::getValue() const{
+string BigFloat::getFirstPart() const {
+    return getValue().substr(0, getLengthToDot());
+}
+
+string BigFloat::getSecondPart() const {
+    return getValue().substr(getLengthToDot() + 1);
+}
+
+string BigFloat::getValue() const {
     return string(value->begin(), value->end());
 }
 
+size_t BigFloat::getLengthToDot() const {
+    return getValue().find('.');
+}
+
 bool BigFloat::isMore(const BigFloat& bf) {
-    size_t lengthToDot = getValue().find('.');
-    size_t lengthToDot1 = bf.getValue().find('.');
-    string getFirst = getValue();
-    string getFirst1 = bf.getValue();
     bool bothNegative = false;
-    if(getFirst1[0] == '-' && getFirst[0] == '-') bothNegative = true;
-    if((getFirst[0] != '-' && getFirst1[0] == '-' ) || lengthToDot > lengthToDot1) {
+    if(bf.getValue()[0] == '-' && getValue()[0] == '-') bothNegative = true;
+    if((getValue()[0] != '-' && bf.getValue()[0] == '-' ) || getLengthToDot() > bf.getLengthToDot()) {
         return true;
     }
-    if((getFirst[0] == '-' && getFirst1[0] != '-' ) || lengthToDot < lengthToDot1) {
+    if((getValue()[0] == '-' && bf.getValue()[0] != '-' ) || getLengthToDot() < bf.getLengthToDot()) {
         return false;
     }
-    for(int i = 0; i < getFirst.length(); i++) {
-        if(lengthToDot == i) {
+    for(int i = 0; i < getValue().length(); i++) {
+        if(getLengthToDot() == i) {
             continue;
         }
-        if(getFirst[i] > getFirst1[i]) {
+        if(getValue()[i] > bf.getValue()[i]) {
             return !bothNegative;
         }
     }
@@ -38,23 +56,19 @@ bool BigFloat::isMore(const BigFloat& bf) {
 }
 
 bool BigFloat::isLess(const BigFloat& bf) {
-    size_t lengthToDot = getValue().find('.');
-    size_t lengthToDot1 = bf.getValue().find('.');
-    string getFirst = getValue();
-    string getFirst1 = bf.getValue();
     bool bothNegative = false;
-    if(getFirst1[0] == '-' && getFirst[0] == '-') bothNegative = true;
-    if((getFirst[0] != '-' && getFirst1[0] == '-' ) || lengthToDot > lengthToDot1) {
+    if(bf.getValue()[0] == '-' && getValue()[0] == '-') bothNegative = true;
+    if((getValue()[0] != '-' && bf.getValue()[0] == '-' ) || getLengthToDot() > bf.getLengthToDot()) {
         return false;
     }
-    if((getFirst[0] == '-' && getFirst1[0] != '-' ) || lengthToDot < lengthToDot1) {
+    if((getValue()[0] == '-' && bf.getValue()[0] != '-' ) || getLengthToDot() < bf.getLengthToDot()) {
         return true;
     }
-    for(int i = 0; i < getFirst.length(); i++) {
-        if(lengthToDot == i) {
+    for(int i = 0; i < getValue().length(); i++) {
+        if(getLengthToDot() == i) {
             continue;
         }
-        if(getFirst[i] > getFirst1[i]) {
+        if(getValue()[i] > bf.getValue()[i]) {
             return bothNegative;
         }
     }
@@ -64,56 +78,46 @@ bool BigFloat::isLess(const BigFloat& bf) {
 BigFloat BigFloat::operator+(const BigFloat& bf){
     bool carry = false;
     bool bothNegative = false;
-    char dot = '.';
-    size_t lengthToDot = getValue().find(dot);
-    string firstPart = getValue().substr(0, lengthToDot);
-    string secondPart = getValue().substr(lengthToDot + 1);
-    string bfValue = bf.getValue();
-    size_t lengthToDot1 = bfValue.find(dot);
-    string firstPart1 = bfValue.substr(0, lengthToDot1);
-    string secondPart1 = bfValue.substr(lengthToDot1 + 1);
-    if(firstPart[0] == '-' && firstPart1[0] == '-') {
-        firstPart = firstPart.substr(1);
-        firstPart1 = firstPart1.substr(1);
+    if(getFirstPart()[0] == '-' && bf.getFirstPart()[0] == '-') {
+        getFirstPart() = getFirstPart().substr(1);
+        bf.getFirstPart() = bf.getFirstPart().substr(1);
         bothNegative = true;
     }
-
     vector <char> partFinal;
-
-    if(secondPart1.length() > secondPart.length()) {
-        string temp = secondPart;
-        secondPart = secondPart1;
-        secondPart1 = temp;
+    if(bf.getSecondPart().length() > getSecondPart().length()) {
+        string temp = getSecondPart();
+        getSecondPart() = bf.getSecondPart();
+        bf.getSecondPart() = temp;
     }
-    if(firstPart1.length() > firstPart.length()) {
-        string temp = firstPart;
-        firstPart = firstPart1;
-        firstPart1 = temp;
+    if(bf.getFirstPart().length() > getFirstPart().length()) {
+        string temp = getFirstPart();
+        getFirstPart() = bf.getFirstPart();
+        bf.getFirstPart() = temp;
     }
-    int difference = firstPart.length() - firstPart1.length();
+    int difference = getFirstPart().length() - bf.getFirstPart().length();
 
-    for(int i = secondPart.length() - 1; i >= 0; i--) {
+    for(int i = getSecondPart().length() - 1; i >= 0; i--) {
         int temp = 0;
         if(carry) {
             carry = false;
             temp++;
         }
-        temp = temp + (secondPart1.length() > i ? (secondPart1[i] - '0') : 0) + (secondPart[i] - '0');
+        temp = temp + (bf.getSecondPart().length() > i ? (bf.getSecondPart()[i] - '0') : 0) + (getSecondPart()[i] - '0');
         if(temp >= 10) {
             carry = true;
             temp = temp - 10;
         }
         partFinal.insert(partFinal.begin(), temp + 48);
     }
-    partFinal.insert(partFinal.begin(), dot);
+    partFinal.insert(partFinal.begin(), '.');
 
-    for(int i = firstPart.length() - 1; i >= 0; i--) {
+    for(int i = getFirstPart().length() - 1; i >= 0; i--) {
         int temp = 0;
         if(carry) {
             carry = false;
             temp++;
         }
-        temp = temp + (i - difference >= 0 ? (firstPart1[i - difference] - '0') : 0) + (firstPart[i] - '0');
+        temp = temp + (i - difference >= 0 ? (bf.getFirstPart()[i - difference] - '0') : 0) + (getFirstPart()[i] - '0');
         if(temp >= 10) {
             carry = true;
             temp = temp - 10;
@@ -126,56 +130,29 @@ BigFloat BigFloat::operator+(const BigFloat& bf){
 }
 
 BigFloat BigFloat::operator-(const BigFloat& bf){
-    bool carry = false;
-    char dot = '.';
-    size_t lengthToDot = getValue().find(dot);
-    string firstPart = getValue().substr(0, lengthToDot);
-    string secondPart = getValue().substr(lengthToDot + 1);
-    string bfValue = bf.getValue();
-    size_t lengthToDot1 = bfValue.find(dot);
-    string firstPart1 = bfValue.substr(0, lengthToDot1);
-    string secondPart1 = bfValue.substr(lengthToDot1 + 1);
-
     vector <char> partFinal;
-
-    for(int i = secondPart.length() - 1; i >= 0; i--) {
-        int temp = 0;
-        if(carry) {
-            carry = false;
-            temp--;
+    int difference = getLengthToDot() - bf.getLengthToDot();
+    int carry = 0;
+    for (int i = bf.getLengthToDot() - 1; i >= 0; i--) {
+        int temp = ((getFirstPart()[i + difference] - 48) - (bf.getFirstPart()[i] - 48) - carry);
+        if (temp < 0) {
+            temp += 10;
+            carry = 1;
         }
-        int secondPart1Num = (secondPart1.length() > i ? (secondPart1[i] - '0') : 0);
-        if(secondPart1Num > (secondPart[i] - '0')) {
-            carry = true;
-            temp = temp + secondPart1Num - (secondPart[i] - '0');
-        }
-        else {
-            temp = temp + (secondPart[i] - '0') - secondPart1Num;
-        }
+        else
+            carry = 0;
         partFinal.insert(partFinal.begin(), temp + 48);
     }
-
-    partFinal.insert(partFinal.begin(), dot);
-
-    int difference = firstPart.length() - firstPart1.length();
-
-    for(int i = firstPart.length() - 1; i >= 0; i--) {
-        int temp = 0;
-        if(carry) {
-            carry = false;
-            temp--;
+    for (int i = difference - 1; i >= 0; i--) {
+        if (getFirstPart()[i] == '0' && carry) {
+            partFinal.insert(partFinal.begin(), '9');
+            continue;
         }
-        int firstPart1Num =  (i - difference >= 0 ? (firstPart1[i - difference] - '0') : 0);
-        if(firstPart1Num > (firstPart[i] - '0')) {
-            temp = temp + firstPart1Num - (firstPart[i] - '0');
-        }
-        else {
-            temp = temp + (firstPart[i] - '0') - firstPart1Num;
-        }
-        partFinal.insert(partFinal.begin(), temp + 48);
+        int temp = ((getFirstPart()[i] - '0') - carry);
+        if (i > 0 || temp > 0)
+            partFinal.insert(partFinal.begin(), temp + 48);
+        carry = 0;
     }
-    if(carry)partFinal.insert(partFinal.begin(), '1');
-    partFinal.insert(partFinal.begin(), '-');
     return BigFloat(string(partFinal.begin(), partFinal.end()));
 }
 
@@ -220,9 +197,6 @@ bool BigFloat::operator<=(const BigFloat& bf) {
     }
     return isLess(bf);
 }
-
-
-
 
 ostream& operator<<(ostream& os, const BigFloat& bf) {
     os << bf.getValue();

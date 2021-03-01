@@ -12,16 +12,17 @@
 	<cmath>
 	<iostream>
 
-1614520445 source:c:\users\deivis\documents\github\big-float-adt\main.cpp
+1614628973 source:c:\users\deivis\documents\github\big-float-adt\main.cpp
 	<iostream>
 	<BigFloat.hpp>
 
-1614521132 c:\users\deivis\documents\github\big-float-adt\include\bigfloat.hpp
+1614629184 c:\users\deivis\documents\github\big-float-adt\include\bigfloat.hpp
 	<string>
 	<vector>
 	<cmath>
 	<iostream>
+	<algorithm>
 
-1614521132 source:c:\users\deivis\documents\github\big-float-adt\src\bigfloat.cpp
+1614629212 source:c:\users\deivis\documents\github\big-float-adt\src\bigfloat.cpp
 	"BigFloat.hpp"
 
