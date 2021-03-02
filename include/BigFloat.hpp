@@ -17,6 +17,10 @@ class BigFloat {
         string getFirstPart() const;
         string getSecondPart() const;
         int getDifference() const;
+        int getFirstPartLength();
+        int getSecondPartLength();
+        int getLengthOfValue();
+        int getValueAt(int index);
         friend ostream& operator<<(ostream& os, const BigFloat& bf);
         BigFloat operator+(const BigFloat& bf);
         BigFloat operator-(const BigFloat& bf);
@@ -29,9 +33,6 @@ class BigFloat {
         bool operator<(const BigFloat& bf);
         bool operator>=(const BigFloat& bf);
         bool operator<=(const BigFloat& bf);
-
-    protected:
-
     private:
         bool isLess(const BigFloat& bf);
         bool isMore(const BigFloat& bf);
