@@ -33,11 +33,11 @@ BigFloat::~BigFloat()
     //dtor
 }
 
-string BigFloat::getFirstPart() const {
+string BigFloat::getFirstPart() const{
     return getValue().substr(0, getLengthToDot());
 }
 
-string BigFloat::getSecondPart() const {
+string BigFloat::getSecondPart() const{
     return getValue().substr(getLengthToDot() + 1);
 }
 
@@ -112,53 +112,54 @@ bool BigFloat::isLess(const BigFloat& bf) {
 BigFloat BigFloat::operator+(const BigFloat& bf){
     bool carry = false;
     bool bothNegative;
+    int first = getFirstPart().length();
+    int bfFirst = bf.getFirstPart().length();
+    int second = getSecondPart().length();
+    int bfSecond = bf.getSecondPart().length();
     if(isNegative == true && bf.isNegative == true) {
         bothNegative = true;
     }
     vector <char> partFinal;
-    if(bf.getSecondPart().length() > getSecondPart().length()) {
-        string temp = getSecondPart();
-        getSecondPart() = bf.getSecondPart();
-        bf.getSecondPart() = temp;
+    string stringValue = getValue().substr(0, getLengthToDot()) + getValue().substr(getLengthToDot() + 1);
+    string bfStringValue = bf.getValue().substr(0, bf.getLengthToDot()) + bf.getValue().substr(bf.getLengthToDot() + 1);
+    if(first > bfFirst){
+        while(first != bfFirst) {
+            bfFirst++;
+            bfStringValue = '0' + bfStringValue;
+        }
     }
-    if(bf.getFirstPart().length() > getFirstPart().length()) {
-        string temp = getFirstPart();
-        getFirstPart() = bf.getFirstPart();
-        bf.getFirstPart() = temp;
+    else if(first < bfFirst) {
+        while(first != bfFirst) {
+            first++;
+            stringValue = '0' + stringValue;
+        }
     }
-    int difference = getFirstPart().length() - bf.getFirstPart().length();
-    //before dot
-    for(int i = getSecondPart().length() - 1; i >= 0; i--) {
+    if(second > bfSecond){
+        while(second != bfSecond) {
+            bfSecond++;
+            bfStringValue +=  '0';
+        }
+    }
+    else if(second < bfSecond) {
+        while(second != bfSecond) {
+            second++;
+            stringValue += '0';
+        }
+    }
+    for(int i = stringValue.length()-1; i >= 0; i--) {
         int temp = 0;
         if(carry) {
             carry = false;
             temp++;
         }
-        temp = temp + (bf.getSecondPart().length() > i ? (bf.getSecondPart()[i] - '0') : 0) + (getSecondPart()[i] - '0');
+        temp = temp + bfStringValue[i] - '0' + stringValue[i] - '0';
         if(temp >= 10) {
             carry = true;
             temp = temp - 10;
         }
         partFinal.insert(partFinal.begin(), temp + 48);
     }
-    partFinal.insert(partFinal.begin(), '.');
-    //after dot
-    for(int i = getFirstPart().length() - 1; i >= 0; i--) {
-        int temp = 0;
-        if(carry) {
-            carry = false;
-            temp++;
-        }
-        temp = temp + (i - difference >= 0 ? (bf.getFirstPart()[i - difference] - '0') : 0) + (getFirstPart()[i] - '0');
-        if(temp >= 10) {
-            carry = true;
-            temp = temp - 10;
-        }
-        partFinal.insert(partFinal.begin(), temp + 48);
-    }
-
-
-
+    partFinal.insert(partFinal.end() - second, '.');
     if(carry)partFinal.insert(partFinal.begin(), '1');
     if(bothNegative) {
         partFinal.insert(partFinal.begin(), '-');

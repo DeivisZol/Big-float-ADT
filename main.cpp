@@ -4,8 +4,8 @@
 using namespace std;
 
 int main() {
-    BigFloat bigFloatas1("1.999");
-    BigFloat bigFloatas2("200.1");
+    BigFloat bigFloatas1("-11.9");
+    BigFloat bigFloatas2("-2059.1");
     cout << bigFloatas1 + bigFloatas2 << endl;
     BigFloat bigFloatas3("-43212132.0");
     BigFloat bigFloatas4("51252216.05012421432");
