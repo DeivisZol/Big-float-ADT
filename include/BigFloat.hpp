@@ -21,6 +21,8 @@ class BigFloat {
         int getSecondPartLength();
         int getLengthOfValue();
         int getValueAt(int index);
+        vector<char> sum(string stringValue, string bfStringValue, int positionOfDot);
+        vector<char> sub(string stringValue, string bfStringValue, int positionOfDot);
         friend ostream& operator<<(ostream& os, const BigFloat& bf);
         BigFloat operator+(const BigFloat& bf);
         BigFloat operator-(const BigFloat& bf);
