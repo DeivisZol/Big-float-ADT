@@ -1,11 +1,25 @@
 #include "BigFloat.hpp"
 
 BigFloat::BigFloat(string input) {
+    if(input[0] == '-') {
+        isNegative = true;
+        input.erase(input.begin()+0);
+    }
     input.erase(0, input.find_first_not_of('0'));
     if(input[0] == '.' ) {
         input = "0" + input;
     }
-    reverse(input.begin(),input.end());
+    reverse(input.begin(), input.end());
+    input.erase(0, input.find_first_not_of('0'));
+    reverse(input.begin(), input.end());
+    if(input[input.length() - 1] == '.') {
+        input += "0";
+    }
+    value = new vector<char>(input.begin(), input.end());
+}
+
+BigFloat::BigFloat(string input, int overload) {
+    reverse(input.begin(), input.end());
     input.erase(0, input.find_first_not_of('0'));
     reverse(input.begin(), input.end());
     if(input[input.length() - 1] == '.') {
@@ -97,10 +111,8 @@ bool BigFloat::isLess(const BigFloat& bf) {
 
 BigFloat BigFloat::operator+(const BigFloat& bf){
     bool carry = false;
-    bool bothNegative = false;
-    if(getFirstPart()[0] == '-' && bf.getFirstPart()[0] == '-') {
-        getFirstPart() = getFirstPart().substr(1);
-        bf.getFirstPart() = bf.getFirstPart().substr(1);
+    bool bothNegative;
+    if(isNegative == true && bf.isNegative == true) {
         bothNegative = true;
     }
     vector <char> partFinal;
@@ -144,9 +156,14 @@ BigFloat BigFloat::operator+(const BigFloat& bf){
         }
         partFinal.insert(partFinal.begin(), temp + 48);
     }
+
+
+
     if(carry)partFinal.insert(partFinal.begin(), '1');
-    if(bothNegative)partFinal.insert(partFinal.begin(), '-');
-    return BigFloat(string(partFinal.begin(), partFinal.end()));
+    if(bothNegative) {
+        partFinal.insert(partFinal.begin(), '-');
+    }
+    return BigFloat(string(partFinal.begin(), partFinal.end()), 0);
 }
 
 BigFloat BigFloat::operator-(const BigFloat& bf){

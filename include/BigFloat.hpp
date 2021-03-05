@@ -34,8 +34,10 @@ class BigFloat {
         bool operator>=(const BigFloat& bf);
         bool operator<=(const BigFloat& bf);
     private:
+        BigFloat(string input, int overload);
         bool isLess(const BigFloat& bf);
         bool isMore(const BigFloat& bf);
+        bool isNegative = false;
         vector<char> *value;
         size_t lengthToDot;
 };
