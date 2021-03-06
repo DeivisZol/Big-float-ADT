@@ -270,7 +270,6 @@ BigFloat BigFloat::operator-(const BigFloat& bf){
 }
 
 BigFloat BigFloat::operator*(const BigFloat& bf) {
-    bool isNegative;
     vector <char> partFinal;
     if ((getFirstPart()[0] == '0' && getSecondPart()[0] == '0') || (bf.getFirstPart()[0] == '0' && bf.getSecondPart()[0] == '0' )) {
         partFinal.insert(partFinal.begin(), '0');
@@ -278,22 +277,8 @@ BigFloat BigFloat::operator*(const BigFloat& bf) {
         partFinal.insert(partFinal.begin(), '0');
         return BigFloat(string(partFinal.begin(), partFinal.end()));
     }
-    string stringValue;
-    string bfStringValue;
-    if((getValue()[0] == '-' && bf.getValue()[0] == '-') || (getValue()[0] != '-' && bf.getValue()[0] != '-')) {
-        stringValue = getValue().substr(0, getLengthToDot()) + getValue().substr(getLengthToDot() + 1);
-        bfStringValue = bf.getValue().substr(0, bf.getLengthToDot()) + bf.getValue().substr(bf.getLengthToDot() + 1);
-    }
-    else if(getValue()[0] == '-') {
-        stringValue = getValue().substr(1, getLengthToDot() - 1) + getValue().substr(getLengthToDot() + 1);
-        bfStringValue = bf.getValue().substr(0, bf.getLengthToDot()) + bf.getValue().substr(bf.getLengthToDot() + 1);
-        isNegative = true;
-    }
-    else if(bf.getValue()[0] == '-') {
-        stringValue = getValue().substr(0, getLengthToDot()) + getValue().substr(getLengthToDot() + 1);
-        bfStringValue = bf.getValue().substr(1, bf.getLengthToDot() - 1) + bf.getValue().substr(bf.getLengthToDot() + 1);
-        isNegative = true;
-    }
+    string stringValue = getValue().substr(0, getLengthToDot()) + getValue().substr(getLengthToDot() + 1);
+    string bfStringValue = bf.getValue().substr(0, bf.getLengthToDot()) + bf.getValue().substr(bf.getLengthToDot() + 1);
     vector<int> temp(stringValue.length() + bfStringValue.length(), 0);
     int index1 = 0;
     int index2 = 0;
@@ -321,10 +306,10 @@ BigFloat BigFloat::operator*(const BigFloat& bf) {
         partFinal.insert(partFinal.end(), temp[zero--] + 48);
     }
     partFinal.insert((getSecondPart().length() >= bf.getSecondPart().length() ? partFinal.end() - getSecondPart().length() - 1 : partFinal.end() - bf.getSecondPart().length() - 1), '.');
-    if(isNegative) {
+    if((isNegative && !bf.isNegative) || (!isNegative && bf.isNegative)) {
         partFinal.insert(partFinal.begin(), '-');
     }
-    return BigFloat(string(partFinal.begin(), partFinal.end()));
+    return BigFloat(string(partFinal.begin(), partFinal.end()), 1);
 }
 
 BigFloat BigFloat::operator/(const BigFloat& bf) {
